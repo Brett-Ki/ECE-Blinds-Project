@@ -13,12 +13,14 @@
 int light = analogRead(A0);
 
 // Stepper Initialization
-AccelStepper stepper(AccelStepper::DRIVER, 2, 3);
+AccelStepper stepper(AccelStepper::DRIVER, 8, 9);
+const int dirPin = 5;
+const int stepPin = 4;
 
 // Track current position
 bool atPositionA = true;
 const int positionA = 0;
-const int positionB = 1000;
+const int positionB = 200; // 1600
 
 // LCD Initialization
 LiquidCrystal_I2C lcd(0x27, 20, 4);
@@ -220,6 +222,8 @@ void setup() {
     }
 
   // Motor
+  pinMode(stepPin, OUTPUT);
+  pinMode(dirPin, OUTPUT);
   stepper.setMaxSpeed(1000);
   stepper.setAcceleration(500);
   stepper.setCurrentPosition(positionA);
