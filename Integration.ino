@@ -6,6 +6,7 @@
 
 /* Known Issues
   - For some reason debouncing works like compound interest, so for now its set to 0
+  - Buttons on IR remote need to be properly mapped
 */
 
 // Photoresistor Initialization
