@@ -7,6 +7,10 @@
 /* Known Issues
   - For some reason debouncing works like compound interest, so for now its set to 0
   - Buttons on IR remote need to be properly mapped
+  - photo sensor might be backwards/opposite 
+ - light is counter clockwise spin off bat (lights on) // closes good // means it starts open //it should if lights are on try to close blinds (counter) 
+ - manual is clockwise off bat // means we start open then close after input 
+
 */
 
 // Photoresistor Initialization
@@ -16,6 +20,7 @@ int light = analogRead(A0);
 AccelStepper stepper(AccelStepper::DRIVER, 8, 9);
 const int dirPin = 5;
 const int stepPin = 4;
+const int stepsToMove = 1800; // <-- This must be up here, outside any function
 
 // Track current position
 bool atPositionA = true;
@@ -241,7 +246,7 @@ void loop() {
 
     switch (command) {
       case Key21::KEY_6:
-        setMode(3);
+        setMode(3); // Menu
         displayMenu();
         break;
       case Key21::KEY_7:
@@ -335,6 +340,7 @@ void automaticModeFunct() {
 // =================================================
 
 // ===================== Motor Subsystem =====================
+/*
 void moveToPosition(bool goToA) {
   if (goToA && !atPositionA) {
     Serial.println("Moving to A");
@@ -348,6 +354,35 @@ void moveToPosition(bool goToA) {
     Serial.println("Already at target position — doing nothing.");
   }
 }
+*/
+void moveToPosition(bool goToA) { 
+  if (goToA && !atPositionA) { 
+    Serial.println("Moving to A"); 
+    digitalWrite(dirPin, LOW); // Direction for A 
+    for (int i = 0; i < stepsToMove; i++) { 
+      digitalWrite(stepPin, HIGH); 
+      delayMicroseconds(500); 
+      digitalWrite(stepPin, LOW); 
+      delayMicroseconds(500); 
+    } 
+    atPositionA = true; 
+  } 
+  else if (!goToA && atPositionA) { 
+    Serial.println("Moving to B"); 
+    digitalWrite(dirPin, HIGH); // Direction for B 
+    for (int i = 0; i < stepsToMove; i++) { 
+      digitalWrite(stepPin, HIGH); 
+      delayMicroseconds(500); 
+      digitalWrite(stepPin, LOW); 
+      delayMicroseconds(500); 
+    } 
+  atPositionA = false; 
+  } 
+  else { 
+    Serial.println("Already at target position — doing nothing.");  } 
+    // delay(1750); // Optional pause after movement 
+  } 
+
 // =================================================
 
 // ===================== IR Remote & LCD Subsystems =====================
